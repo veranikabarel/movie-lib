@@ -1,12 +1,25 @@
 import React, { useEffect, useState } from "react";
+import { useDispatch } from "react-redux";
+import { useDebounce } from "../hooks/useDebounce";
 import { useMovieSearch } from "../hooks/useMovieSearch";
+import { addSelectedMovie } from "../store/moviesSlice";
 import { Movie } from "../types";
+
+const DEBOUNCE_VALUE = 500;
 
 export const SearchBox: React.FC = () => {
   const [query, setQuery] = useState("");
   const [dropdownOpen, setDropdownOpen] = useState(false);
+  const debouncedQuery = useDebounce(query, DEBOUNCE_VALUE);
+  const dispatch = useDispatch();
 
-  const { data: results = [], isLoading, error } = useMovieSearch(query);
+  const { data: results = [], isLoading, error } = useMovieSearch(debouncedQuery);
+
+  const handleSelectMovie = (movie: Movie) => {
+    dispatch(addSelectedMovie(movie));
+    setQuery("");
+    setDropdownOpen(false);
+  };
 
   const handleClearSearch = () => {
     setQuery("");
@@ -58,7 +71,12 @@ export const SearchBox: React.FC = () => {
                 results.length > 0 &&
                 results.map((movie: Movie) => (
                   <li key={movie.id} className="cursor-pointer">
-                    <button className="w-full px-4 py-2 text-left hover:bg-yellow-600">{movie.name}</button>
+                    <button
+                      onClick={() => handleSelectMovie(movie)}
+                      className="w-full px-4 py-2 text-left hover:bg-yellow-600"
+                    >
+                      {movie.name}
+                    </button>
                   </li>
                 ))}
               {!isLoading && !error && results.length === 0 && query && (

@@ -12,3 +12,7 @@ export interface Movie {
   summary: string;
   addedAt: number;
 }
+
+export interface SelectedMovie extends Movie {
+  addedAt: number;
+}
