@@ -45,7 +45,7 @@ export const Movie: React.FC = () => {
 
       <div className="w-full sm:gap-2 md:flex md:gap-4">
         <div className="md:w-1/2">
-          {displayMovie.image.original ? (
+          {displayMovie.image?.original ? (
             <img className="mb-4 md:w-2/3" src={displayMovie.image.original} alt={`${displayMovie.name} poster`} />
           ) : (
             <div className="sm:mb-4 md:w-2/3">

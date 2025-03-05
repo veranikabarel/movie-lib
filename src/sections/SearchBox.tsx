@@ -1,17 +1,19 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
-
+import { useDebounce } from "../hooks/useDebounce";
 import { useMovieSearch } from "../hooks/useMovieSearch";
 import { addSelectedMovie } from "../store/moviesSlice";
 import { Movie } from "../types";
 
+const DEBOUNCE_VALUE = 500;
+
 export const SearchBox: React.FC = () => {
   const [query, setQuery] = useState("");
   const [dropdownOpen, setDropdownOpen] = useState(false);
-
+  const debouncedQuery = useDebounce(query, DEBOUNCE_VALUE);
   const dispatch = useDispatch();
 
-  const { data: results = [], isLoading, error } = useMovieSearch(query);
+  const { data: results = [], isLoading, error } = useMovieSearch(debouncedQuery);
 
   const handleSelectMovie = (movie: Movie) => {
     dispatch(addSelectedMovie(movie));

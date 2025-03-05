@@ -20,7 +20,9 @@ export const MovieList: React.FC = () => {
           {selectedMovies.map((movie) => (
             <li className="flex h-30 justify-between p-2 shadow-md shadow-yellow-600 md:p-4" key={movie.id}>
               <div className="flex w-full gap-4">
-                {movie.image.medium && <img className="h-full" src={movie.image.medium} alt={`${movie.name} poster`} />}
+                {movie.image?.medium && (
+                  <img className="h-full" src={movie.image.medium} alt={`${movie.name} poster`} />
+                )}
                 <div className="flex w-full items-center justify-between">
                   <div className="flex flex-col gap-2">
                     <div>
