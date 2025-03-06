@@ -1,26 +1,20 @@
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { Link, useNavigate, useParams } from "react-router";
 import { useMovieDetails } from "../hooks/useMovieDetails";
-import { RootState } from "../store";
 import { removeSelectedMovie } from "../store/moviesSlice";
 
 export const Movie: React.FC = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-
-  const { selectedMovies } = useSelector((state: RootState) => state.movies);
   const dispatch = useDispatch();
 
   const movieId = parseInt(id ?? "0", 10);
-  const { data: movie, isLoading, isError } = useMovieDetails(movieId);
+  const { data: movie, isLoading, error } = useMovieDetails(movieId);
 
   const handleRemoveMovie = (id: number) => {
     dispatch(removeSelectedMovie(id));
     navigate("/");
   };
-
-  const selectedMovie = selectedMovies.find((movie) => movie.id === movieId);
-  const displayMovie = movie || selectedMovie;
 
   const createMarkup = (html: string) => {
     return { __html: html };
@@ -30,7 +24,7 @@ export const Movie: React.FC = () => {
     return <div className="px-2 py-4 md:p-4 lg:mx-auto lg:w-2/3 lg:items-center">Loading...</div>;
   }
 
-  if (isError) {
+  if (error) {
     return <div className="px-2 py-4 md:p-4 lg:mx-auto lg:w-2/3 lg:items-center">Something went wrong...</div>;
   }
 
@@ -45,8 +39,8 @@ export const Movie: React.FC = () => {
 
       <div className="w-full sm:gap-2 md:flex md:gap-4">
         <div className="md:w-1/2">
-          {displayMovie.image?.original ? (
-            <img className="mb-4 md:w-2/3" src={displayMovie.image.original} alt={`${displayMovie.name} poster`} />
+          {movie.image?.original ? (
+            <img className="mb-4 md:w-2/3" src={movie.image.original} alt={`${movie.name} poster`} />
           ) : (
             <div className="sm:mb-4 md:w-2/3">
               <p className="text-md md:text-lg">No image available</p>
@@ -56,7 +50,7 @@ export const Movie: React.FC = () => {
 
         <div className="flex flex-col gap-6 md:w-1/2">
           <div className="flex items-center justify-between gap-2">
-            <h1 className="flex-wrap text-3xl md:text-4xl">{displayMovie.name}</h1>
+            <h1 className="flex-wrap text-3xl md:text-4xl">{movie.name}</h1>
             <svg
               onClick={() => handleRemoveMovie(movie.id)}
               className="h-4 w-4 hover:cursor-pointer md:h-6 md:w-6"
@@ -67,14 +61,10 @@ export const Movie: React.FC = () => {
             </svg>
           </div>
 
-          <p className="md:text-md text-sm">Rating: {displayMovie.rating.average ?? "No rating"}</p>
+          <p className="md:text-md text-sm">Rating: {movie.rating.average ?? "No rating"}</p>
 
           <p className="text-md md:text-lg">
-            {displayMovie.summary ? (
-              <span dangerouslySetInnerHTML={createMarkup(displayMovie.summary)} />
-            ) : (
-              "No description"
-            )}
+            {movie.summary ? <span dangerouslySetInnerHTML={createMarkup(movie.summary)} /> : "No description"}
           </p>
         </div>
       </div>
